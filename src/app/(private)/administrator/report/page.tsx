@@ -1,4 +1,4 @@
-import AdministratorPage from "@/components/administrator/AdministratorPage"
+import ReportPage from "@/components/administrator/report/ReportPage"
 import { Metadata } from "next"
 
 export const metadata: Metadata = {
@@ -8,7 +8,6 @@ export const metadata: Metadata = {
 
 export default function Page() {
   return (
-    <AdministratorPage />
+    <ReportPage />
   )
 }
-

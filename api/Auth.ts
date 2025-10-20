@@ -1,6 +1,3 @@
-// import { cookies } from "next/headers";
-// import { setCookie } from "../actions/Auth.action";
-
 export class AuthApi {
   private base_url: URL
 
@@ -18,40 +15,7 @@ export class AuthApi {
         body: JSON.stringify(payload),
     });
 
-    // if (!result.ok) throw new Error('Erro ao realizar login');
-    const user = await result.json();
-
-    // const cookieStoreOne = await cookies();
-    // cookieStoreOne.set({
-    //   name: 'refresh_token',
-    //   value: user.refreshToken,
-    //   path: '/',
-    //   secure: process.env.NODE_ENV === 'production',
-    //   httpOnly: true,
-    //   sameSite: 'lax',
-    //   maxAge: 60 * 60 * 24 * 7,
-    // });
-
-    // const cookieStoreTwo = await cookies();
-    // cookieStoreTwo.set({
-    //   name: "access_token",
-    //   value: user.accessToken,
-    //   path: '/',
-    //   secure: process.env.NODE_ENV === 'production',
-    //   httpOnly: true,
-    //   sameSite: 'lax',
-    //   maxAge: 60 * 60 * 24 * 7,
-    // });
-    
-    // console.log("user Segundo =>")
-    // console.log(user)
-    // console.log('a')
-    // setCookie("access_token", user.accessToken)
-    // console.log('b')
-    // setCookie("refresh_token", user.refreshToken)
-    // console.log('c')
-
-    return user;
+    return await result.json();
   }
 }
 
