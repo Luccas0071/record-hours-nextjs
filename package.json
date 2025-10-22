@@ -24,6 +24,7 @@
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "date-fns": "^4.1.0",
+    "jwt-decode": "^4.0.0",
     "lucide-react": "^0.542.0",
     "next": "15.5.0",
     "react": "19.1.0",
@@ -32,7 +33,8 @@
     "react-hook-form": "^7.64.0",
     "recharts": "^2.15.4",
     "tailwind-merge": "^3.3.1",
-    "zod": "^4.1.11"
+    "zod": "^4.1.11",
+    "zustand": "^5.0.8"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",

@@ -1,24 +1,55 @@
-import { NextResponse } from "next/server";
-import type { NextRequest } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
+import { jwtDecode } from "jwt-decode";
+import UserRole from "@/enum/UserRole.enum";
 
-export async function middleware(request: NextRequest) {
+interface TokenPayload {
+  sub: number;
+  name: string;
+  email: string;
+  role: string;
+}
+
+export function middleware(request: NextRequest) {
+  const token = request.cookies.get("access_token")?.value;
   const { pathname } = request.nextUrl;
 
-  const isAuth = request.cookies.get("access_token")?.value;
-
-  // Se já está logado, não deixa acessar login/register
-  if ((pathname === "/login" || pathname === "/register") && isAuth) {
-    return NextResponse.redirect(new URL("/", request.url));
+  // 🔒 1. Usuário não autenticado → redireciona para login
+  if (!token) {
+    if (
+      pathname === "/" ||
+      pathname.startsWith("/administrator") ||
+      pathname.startsWith("/collaborator")
+    ) {
+      return NextResponse.redirect(new URL("/login", request.url));
+    }
+    return NextResponse.next();
   }
 
-  if (
-    (
-      pathname.startsWith("/administrator") || 
-      pathname.startsWith("/collaborator")|| 
-      pathname === "/"
-    ) 
-     && !isAuth ) {
-    return NextResponse.redirect(new URL("/login", request.url));
+  // 🧩 2. Decodifica o token
+  const decoded = jwtDecode<TokenPayload>(token);
+  const userRole = decoded?.role;
+
+  // 🚫 3. Impede acesso cruzado entre roles
+  if (pathname.startsWith("/administrator") && userRole === UserRole.USER) {
+    return NextResponse.redirect(new URL("/collaborator/dashboard", request.url));
+  }
+  
+  // 🔁 4. Evita que usuários logados acessem login/register
+  if ((pathname === "/login" || pathname === "/register")) {
+    if (userRole === UserRole.ADMINISTRATOR) {
+      return NextResponse.redirect(new URL("/administrator/dashboard", request.url));
+    } else if (userRole === UserRole.USER) {
+      return NextResponse.redirect(new URL("/collaborator/dashboard", request.url));
+    }
+  }
+
+  // 🏠 5. Redireciona / para a dashboard certa
+  if (pathname === "/") {
+    if (userRole === UserRole.ADMINISTRATOR) {
+      return NextResponse.redirect(new URL("/administrator/dashboard", request.url));
+    } else if (userRole === UserRole.USER) {
+      return NextResponse.redirect(new URL("/collaborator/dashboard", request.url));
+    }
   }
 
   return NextResponse.next();

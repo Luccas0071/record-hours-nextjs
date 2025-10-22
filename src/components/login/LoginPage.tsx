@@ -3,16 +3,21 @@ import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Card, CardContent } from "@/components/ui/card"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import Image from "next/image"
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { LoginSchema, LoginType } from "../../../types/Auth.types";
 import UserRole from "@/enum/UserRole.enum";
+import { Clock } from "lucide-react";
+import { AlertCircle } from "lucide-react";
+import { Alert, AlertDescription } from "../ui/alert";
+import { userStore } from "@/store/userStore";
 
 export function LoginPage() {
   const router = useRouter();
+  const setUser = userStore((state) => state.setUser);
 
   const { register, handleSubmit, formState: { errors } } = useForm<LoginType>({
     resolver: zodResolver(LoginSchema),
@@ -34,6 +39,13 @@ export function LoginPage() {
 
       const data = await response.json();
 
+      setUser({
+        id: data.sub,
+        name: data.name, 
+        email: data.email, 
+        role: data.role 
+      });
+
       if (data.role === UserRole.ADMINISTRATOR) {
         await router.replace("/administrator/dashboard");
       } else if (data.role === UserRole.USER) {
@@ -46,67 +58,68 @@ export function LoginPage() {
   };
 
   return (
-    <div className="bg-muted flex min-h-svh flex-col items-center justify-center p-6 md:p-10">
-      <div className="w-full max-w-sm md:max-w-3xl">
-        <div className={cn("flex flex-col gap-6")}>
-          <Card className="overflow-hidden p-0">
-            <CardContent className="grid p-0 md:grid-cols-2">
-              <form onSubmit={handleSubmit(onSubmit)} className="p-6 md:p-8">
-                <div className="flex flex-col gap-6">
-                  <div className="flex flex-col items-center text-center">
-                    <h1 className="text-2xl font-bold">Gestão de Horas</h1>
-                    <p className="text-muted-foreground text-balance">
-                      Controle inteligente do tempo trabalhado.
-                    </p>
-                  </div>
-                  <div className="grid gap-3">
-                    <Label htmlFor="email">Email</Label>
-                    <Input
-                      id="email"
-                      type="email"
-                      placeholder="usuário@gmail.com"
-                      {...register("email")}
-                    />
-                    {errors.email && <span className="text-red-500">{errors.email.message}</span>}
-
-                  </div>
-                  <div className="grid gap-3">
-                    <div className="flex items-center">
-                      <Label htmlFor="password">Senha</Label>
-                    </div>
-                    <Input
-                      id="password"
-                      type="password"
-                      placeholder="********"
-                      {...register("password")}
-                    />
-                    {errors.password && <span className="text-red-500">{errors.password.message}</span>}
-
-                  </div>
-                  <Button type="submit" className="w-full">
-                    Login
-                  </Button>
-                </div>
-              </form>
-              <div className="bg-muted relative hidden md:block">
-                <Image
-                  height={350}
-                  width={350}
-                  src="/login.png"
-                  alt="Image"
-                  className="absolute inset-0 h-full w-full object-cover dark:brightness-[0.2] dark:grayscale"
-                />
-              </div>
-            </CardContent>
-          </Card>
-          <div className="text-muted-foreground *:[a]:hover:text-primary text-center text-xs text-balance *:[a]:underline *:[a]:underline-offset-4">
-            Ao clicar em continuar, você concorda com nossos <a href="#">Termos de Serviço</a>{" "}
-            e <a href="#">Política de Privacidade</a>.
+    <div className="min-h-screen flex items-center justify-center bg-muted/30 p-4">
+      <Card className="w-full max-w-md">
+        <CardHeader className="text-center space-y-2">
+          <div className="flex justify-center mb-2">
+            <div className="bg-primary text-primary-foreground p-3 rounded-lg">
+              <Clock className="h-8 w-8" />
+            </div>
           </div>
-        </div>
-      </div>
+          <CardTitle className="text-2xl">Sistema de Registro de Horas</CardTitle>
+          <CardDescription>Faça login para acessar o sistema</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="username">Email</Label>
+              <Input
+                id="email"
+                type="email"
+                placeholder="Digite seu email"
+                {...register("email")}
+                required
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="password">Senha</Label>
+              <Input
+                id="password"
+                type="password"
+                placeholder="Digite sua senha"
+                {...register("password")}
+                required
+              />
+            </div>
+
+            {errors.email && (
+              <Alert variant="destructive">
+                <AlertCircle className="h-4 w-4" />
+                <AlertDescription>{errors.email.message}</AlertDescription>
+              </Alert>
+            )}
+            {errors.password && (
+              <Alert variant="destructive">
+                <AlertCircle className="h-4 w-4" />
+                <AlertDescription>{errors.password.message}</AlertDescription>
+              </Alert>
+            )}
+
+            <Button type="submit" className="w-full" size="lg">
+              Entrar
+            </Button>
+
+            <div className="text-xs text-muted-foreground text-center space-y-1 pt-2">
+              <p className="font-medium">Credenciais de demonstração:</p>
+              <p>Admin: admin / admin123</p>
+              <p>Funcionário: funcionario / func123</p>
+            </div>
+          </form>
+        </CardContent>
+      </Card>
     </div>
-  )
+  );
 }
 
 
