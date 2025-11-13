@@ -8,7 +8,7 @@ import Image from "next/image"
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { LoginSchema, LoginType } from "../../../types/Auth.types";
+import { LoginSchema, LoginType } from "../../types/Auth.types";
 import UserRole from "@/enum/UserRole.enum";
 import { Clock } from "lucide-react";
 import { AlertCircle } from "lucide-react";

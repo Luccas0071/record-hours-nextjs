@@ -5,7 +5,7 @@ import { TimeEntryForm } from "@/components/collaborator/time-entry-form";
 import { TimeEntryList } from "@/components/collaborator/time-entry-list";
 import { Button } from "@/components/ui/button"
 import { getStoredTimeEntries } from "@/lib/mock-data";
-import { Clock, FileText, Home, LayoutDashboard } from "lucide-react"
+import { Clock, FileText, Home, LayoutDashboard, User } from "lucide-react"
 import Link from "next/link"
 import { useMemo } from "react";
 
@@ -19,7 +19,7 @@ export default function PrivateLayout({
       <header className="border-b bg-white/80 backdrop-blur-sm sticky top-0 z-10">
         <div className="container mx-auto flex h-16 items-center justify-between px-4">
           <div className="flex items-center gap-2">
-            <Clock className="h-6 w-6 text-primary" />
+            <Clock className="h-6 w-6 text-primary"/>
             <span className="text-xl font-bold">Gerenciador de Horas</span>
             <span className="ml-2 text-xs bg-primary/10 text-primary px-2 py-1 rounded-full font-semibold">ADMIN</span>
           </div>
@@ -37,9 +37,9 @@ export default function PrivateLayout({
               </Link>
             </Button>
             <Button variant="ghost" size="sm" asChild>
-              <Link href="/">
-                <Home className="h-4 w-4 mr-2" />
-                Início
+              <Link href="/administrator/users">
+                <User className="h-4 w-4 mr-2" />
+                Usuários
               </Link>
             </Button>
           </div>
